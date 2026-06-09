@@ -29,10 +29,7 @@ function plugin_init_simpleportal(): void
     }
 
     $PLUGIN_HOOKS['menu_toadd']['simpleportal'] = [];
-
-    if (\Session::haveRight('config', UPDATE)) {
-        $PLUGIN_HOOKS[\Glpi\Plugin\Hooks::CONFIG_PAGE]['simpleportal'] = 'config';
-    }
+    $PLUGIN_HOOKS[\Glpi\Plugin\Hooks::CONFIG_PAGE]['simpleportal'] = 'config';
 }
 
 function plugin_simpleportal_boot(): void
