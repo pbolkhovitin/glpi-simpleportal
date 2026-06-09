@@ -49,9 +49,13 @@ function plugin_simpleportal_install(): bool
 {
     $config = new \Config();
     $config->setConfigurationValues('simpleportal', [
-        'api_url'         => '',
-        'api_app_token'   => '',
-        'api_user_token'  => '',
+        'api_url'               => '',
+        'api_app_token'         => '',
+        'api_user_token'        => '',
+        'default_entity_id'      => 0,
+        'ticket_type'            => 1,
+        'notification_enabled'   => 1,
+        'notification_email_from' => '',
     ]);
     return true;
 }

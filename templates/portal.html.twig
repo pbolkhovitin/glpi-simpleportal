@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block content_block %}
-    <link rel="stylesheet" href="{{ get_plugin_web_dir("simpleportal") }}/css/portal.css">
+    <link rel="stylesheet" href="/plugins/simpleportal/css/portal.css">
 
     {% if success %}
         <div class="alert alert-success" role="alert">
@@ -28,6 +28,7 @@
         {% endif %}
 
         <form method="post" action="{{ path("@simpleportal:simpleportal_index") }}" novalidate>
+            <input type="hidden" name="_glpi_csrf_token" value="{{ csrf_token() }}">
             <div class="mb-3">
                 <label for="name" class="form-label">{{ __("Your name", "simpleportal") }} <span class="text-danger">*</span></label>
                 <input type="text" id="name" name="name" class="form-control" required

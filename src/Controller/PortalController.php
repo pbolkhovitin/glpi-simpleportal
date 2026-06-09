@@ -29,21 +29,25 @@ final class PortalController extends AbstractController
             $errors = $result['errors'];
         }
 
+        $form_data = $request->request->all();
+        if (empty($form_data)) {
+            $form_data = ['name' => '', 'email' => '', 'category_id' => 0, 'content' => ''];
+        }
+
         return $this->render('@simpleportal/portal.html.twig', [
             'categories' => $categories,
             'errors'     => $errors,
             'success'    => $success,
-            'form_data'  => $request->request->all(),
+            'form_data'  => $form_data,
         ]);
     }
 
     private function getCategories(): array
     {
-        $db = new \DBmysql();
-        $iterator = $db->request('glpi_itilcategories', [
+        global $DB;
+        $iterator = $DB->request('glpi_itilcategories', [
             'WHERE'  => [
-                'is_active'  => 1,
-                'is_deleted' => 0,
+                'is_helpdeskvisible' => 1,
             ],
             'ORDER'  => 'name',
         ]);
@@ -81,6 +85,9 @@ final class PortalController extends AbstractController
             'api_url',
             'api_app_token',
             'api_user_token',
+            'default_entity_id',
+            'ticket_type',
+            'notification_enabled',
         ]);
 
         $api_url    = !empty($config['api_url']) ? $config['api_url'] : $this->getDefaultApiUrl();
@@ -102,8 +109,9 @@ final class PortalController extends AbstractController
                 '_users_id_requester' => 0,
                 '_users_id_assign'   => 0,
                 '_users_id_observer' => 0,
+                'entities_id'        => (int)($config['default_entity_id'] ?? 0),
                 'itilcategories_id'  => $category_id,
-                'type'               => \Ticket::INCIDENT_TYPE,
+                'type'               => (int)($config['ticket_type'] ?? 1),
                 '_additional_emails' => [
                     ['email' => $email],
                 ],
@@ -129,7 +137,9 @@ final class PortalController extends AbstractController
         $this->killApiSession($api_url, $session_token);
 
         if ($http_code === 201) {
-            $this->sendConfirmationEmail($email, $name);
+            if (!empty($config['notification_enabled'])) {
+                $this->sendConfirmationEmail($email, $name, $config['notification_email_from'] ?? '');
+            }
             return ['success' => true, 'errors' => []];
         }
 
@@ -143,9 +153,11 @@ final class PortalController extends AbstractController
 
     private function initApiSession(string $api_url, string $app_token, string $user_token): ?string
     {
-        $headers = [
-            "App-Token: {$app_token}",
-        ];
+        $headers = [];
+
+        if (!empty($app_token)) {
+            $headers[] = "App-Token: {$app_token}";
+        }
 
         if (!empty($user_token)) {
             $headers[] = "Authorization: user_token {$user_token}";
@@ -206,9 +218,9 @@ final class PortalController extends AbstractController
             return $decoded;
         }
 
-        $last_brace = strrpos($data, '}');
-        if ($last_brace !== false) {
-            $decoded = json_decode(substr($data, 0, $last_brace + 1), true);
+        $first_brace = strpos($data, '{');
+        if ($first_brace !== false) {
+            $decoded = json_decode(substr($data, $first_brace), true);
             if ($decoded !== null) {
                 return $decoded;
             }
@@ -217,13 +229,17 @@ final class PortalController extends AbstractController
         return null;
     }
 
-    private function sendConfirmationEmail(string $email, string $name): void
+    private function sendConfirmationEmail(string $email, string $name, string $from = ''): void
     {
         $subject = sprintf(__('Your request has been received', 'simpleportal'), $name);
         $message = sprintf(
             __("Hello %s,\n\nYour support request has been submitted successfully.\nWe will get back to you as soon as possible.\n\nBest regards,\nSupport Team", 'simpleportal'),
             $name
         );
-        mail($email, $subject, $message, "Content-Type: text/plain; charset=UTF-8\r\n");
+        $headers = "Content-Type: text/plain; charset=UTF-8\r\n";
+        if (!empty($from)) {
+            $headers .= "From: {$from}\r\n";
+        }
+        mail($email, $subject, $message, $headers);
     }
 }

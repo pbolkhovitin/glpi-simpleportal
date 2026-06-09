@@ -1,0 +1,127 @@
+<div class="container-fluid">
+    <div class="row">
+
+        <div class="col-12 col-lg-7">
+
+            <form method="post" action="{{ path("@simpleportal:simpleportal_config") }}" class="card">
+                <div class="card-header">
+                    <h3 class="card-title">{{ __("Settings", "simpleportal") }}</h3>
+                </div>
+                <div class="card-body">
+
+                    <div class="mb-3">
+                        <label class="form-label" for="default_entity_id">{{ __("Default entity", "simpleportal") }}</label>
+                        <select id="default_entity_id" name="default_entity_id" class="form-select">
+                            <option value="0" {{ config.default_entity_id == 0 ? "selected" : "" }}>{{ __("Root entity") }}</option>
+                            {% for eid, ename in entities %}
+                                <option value="{{ eid }}" {{ config.default_entity_id == eid ? "selected" : "" }}>{{ ename }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="ticket_type">{{ __("Default ticket type", "simpleportal") }}</label>
+                        <select id="ticket_type" name="ticket_type" class="form-select">
+                            <option value="1" {{ config.ticket_type == 1 ? "selected" : "" }}>{{ __("Incident") }}</option>
+                            <option value="2" {{ config.ticket_type == 2 ? "selected" : "" }}>{{ __("Request") }}</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="notification_enabled" name="notification_enabled" value="1" {{ config.notification_enabled ? "checked" : "" }}>
+                            <label class="form-check-label" for="notification_enabled">{{ __("Enable email notifications", "simpleportal") }}</label>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="notification_email_from">{{ __("Notification sender email", "simpleportal") }}</label>
+                        <input type="email" id="notification_email_from" name="notification_email_from" class="form-control" value="{{ config.notification_email_from }}">
+                    </div>
+
+                </div>
+                <div class="card-footer text-end">
+                    <input type="hidden" name="_glpi_csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" name="update" class="btn btn-primary">{{ __("Save") }}</button>
+                </div>
+            </form>
+
+        </div>
+
+        <div class="col-12 col-lg-5">
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">{{ __("Technical Information", "simpleportal") }}</h3>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-striped mb-0">
+                        <tbody>
+                            <tr>
+                                <td class="fw-bold w-50">{{ __("Plugin version", "simpleportal") }}</td>
+                                <td>{{ info.plugin_version }}</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">{{ __("GLPI version", "simpleportal") }}</td>
+                                <td>{{ info.glpi_version }}</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">{{ __("PHP version", "simpleportal") }}</td>
+                                <td>{{ info.php_version }}</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">{{ __("PHP memory limit", "simpleportal") }}</td>
+                                <td>{{ info.php_memory_limit }}</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">{{ __("PHP max execution time", "simpleportal") }}</td>
+                                <td>{{ info.php_max_exec_time }}s</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">{{ __("Database", "simpleportal") }}</td>
+                                <td>
+                                    {% if info.db_connected %}
+                                        <span class="badge bg-success">{{ __("Connected") }}</span> {{ info.db_host }} / {{ info.db_name }}
+                                    {% else %}
+                                        <span class="badge bg-danger">{{ __("Disconnected") }}</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">{{ __("API connection", "simpleportal") }}</td>
+                                <td>
+                                    {% if info.api_ok %}
+                                        <span class="badge bg-success">{{ __("OK") }}</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">{{ __("Error") }}</span>
+                                    {% endif %}
+                                    <small class="ms-1 text-muted">{{ info.api_message }}</small>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">{{ __("Tickets via portal", "simpleportal") }}</td>
+                                <td>{{ info.ticket_count }}</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">{{ __("Plugin directory", "simpleportal") }}</td>
+                                <td><code>{{ info.plugin_dir }}</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h3 class="card-title">{{ __("Portal URL", "simpleportal") }}</h3>
+                </div>
+                <div class="card-body">
+                    <p>{{ __("Users can submit requests at", "simpleportal") }}:</p>
+                    <pre class="mb-0"><a href="{{ portal_url }}" target="_blank">{{ portal_url }}</a></pre>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
