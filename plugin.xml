@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <name>SimplePortal</name>
+    <key>simpleportal</key>
+    <description>
+        <en>Anonymous ticket submission portal for GLPI.</en>
+        <ru>Публичный портал подачи заявок для GLPI.</ru>
+    </description>
+    <homepage>https://github.com/pbolkhovitin/glpi-simpleportal</homepage>
+    <authors>
+        <author>pbolkhovitin</author>
+    </authors>
+    <versions>
+        <version>
+            <num>1.0.0</num>
+            <compatibility>11.0</compatibility>
+        </version>
+    </versions>
+    <license>GPLv3+</license>
+</root>

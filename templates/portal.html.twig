@@ -1,0 +1,68 @@
+{% extends "layout/page_card_notlogged.html.twig" %}
+
+{% block header_block %}
+    <h2 class="card-title">{{ __("Submit a Support Request", "simpleportal") }}</h2>
+{% endblock %}
+
+{% block content_block %}
+    <link rel="stylesheet" href="{{ get_plugin_web_dir("simpleportal") }}/css/portal.css">
+
+    {% if success %}
+        <div class="alert alert-success" role="alert">
+            {{ __("Your request has been submitted successfully. We will contact you shortly.", "simpleportal") }}
+        </div>
+        <div class="text-center mt-3">
+            <a href="{{ path("@simpleportal:simpleportal_index") }}" class="btn btn-primary">
+                {{ __("Submit another request", "simpleportal") }}
+            </a>
+        </div>
+    {% else %}
+        {% if errors|length > 0 %}
+            <div class="alert alert-danger" role="alert">
+                <ul class="mb-0">
+                    {% for error in errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
+        <form method="post" action="{{ path("@simpleportal:simpleportal_index") }}" novalidate>
+            <div class="mb-3">
+                <label for="name" class="form-label">{{ __("Your name", "simpleportal") }} <span class="text-danger">*</span></label>
+                <input type="text" id="name" name="name" class="form-control" required
+                       value="{{ form_data.name }}">
+            </div>
+
+            <div class="mb-3">
+                <label for="email" class="form-label">{{ __("Email address", "simpleportal") }} <span class="text-danger">*</span></label>
+                <input type="email" id="email" name="email" class="form-control" required
+                       value="{{ form_data.email }}">
+            </div>
+
+            <div class="mb-3">
+                <label for="category_id" class="form-label">{{ __("Category", "simpleportal") }}</label>
+                <select id="category_id" name="category_id" class="form-control">
+                    <option value="0">{{ __("-- Select a category --", "simpleportal") }}</option>
+                    {% for id, name in categories %}
+                        <option value="{{ id }}" {{ form_data.category_id == id ? "selected" : "" }}>{{ name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="content" class="form-label">{{ __("Description", "simpleportal") }} <span class="text-danger">*</span></label>
+                <textarea id="content" name="content" class="form-control" rows="6" required>{{ form_data.content }}</textarea>
+            </div>
+
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary btn-lg w-100">
+                    {{ __("Submit request", "simpleportal") }}
+                </button>
+            </div>
+        </form>
+    {% endif %}
+{% endblock %}
+
+{% block footer_block %}
+{% endblock %}
