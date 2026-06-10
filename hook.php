@@ -19,18 +19,9 @@
  * ---------------------------------------------------------------------
  */
 
-function plugin_init_simpleportal(): void
-{
-    global $PLUGIN_HOOKS;
-
-    $plugin = new \Plugin();
-    if (!$plugin->isActivated('simpleportal')) {
-        return;
-    }
-
-    $PLUGIN_HOOKS['menu_toadd']['simpleportal'] = [];
-    $PLUGIN_HOOKS[\Glpi\Plugin\Hooks::CONFIG_PAGE]['simpleportal'] = 'config';
-}
+global $PLUGIN_HOOKS;
+$PLUGIN_HOOKS['menu_toadd']['simpleportal'] = [];
+$PLUGIN_HOOKS[\Glpi\Plugin\Hooks::CONFIG_PAGE]['simpleportal'] = 'config';
 
 function plugin_simpleportal_boot(): void
 {

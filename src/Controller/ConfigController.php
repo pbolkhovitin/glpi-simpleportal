@@ -8,6 +8,7 @@ use DB;
 use DBmysqlIterator;
 use Dropdown;
 use Entity;
+use Glpi\Application\View\TemplateRenderer;
 use Glpi\Controller\AbstractController;
 use Glpi\Http\Firewall;
 use Glpi\Security\Attribute\SecurityStrategy;
@@ -48,7 +49,7 @@ final class ConfigController extends AbstractController
         $info = $this->collectTechInfo();
 
         $entities_list = [0 => __('Root entity')];
-        foreach ((new Entity())->find([], ['name' => 'ASC']) as $e) {
+        foreach ((new Entity())->find([], ['name ASC']) as $e) {
             $entities_list[$e['id']] = $e['name'];
         }
 
@@ -58,7 +59,7 @@ final class ConfigController extends AbstractController
 
         ob_start();
         Html::header(__('SimplePortal Configuration', 'simpleportal'), '', 'config', 'plugin');
-        echo $this->renderView('@simpleportal/config.html.twig', [
+        echo TemplateRenderer::getInstance()->render('@simpleportal/config.html.twig', [
             'config'      => $config,
             'info'        => $info,
             'entities'    => $entities_list,
