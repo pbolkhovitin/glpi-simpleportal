@@ -1,44 +1,54 @@
 # SimplePortal — GLPI Plugin
 
-Anonymous ticket submission portal for GLPI 11.x.
+Anonymous ticket submission portal for GLPI 11.x with admin configuration page.
 
 ## Features
 
 - Public ticket submission form (no authentication required)
-- Category selection from active ITIL categories
+- Category selection from active helpdesk ITIL categories
 - Email confirmation on successful submission
-- GLPI API-based ticket creation
-- Clean GLPI-themed interface
+- Admin config page (settings + technical info panel)
+- CSRF-protected form
+- GLPI-themed Twig-based interface
 
 ## Requirements
 
 - GLPI ≥ 11.0
 - PHP ≥ 8.1
-- curl extension enabled
-- GLPI REST API enabled with an API client configured
 
 ## Installation
 
-1. Clone the repository into the `plugins/simpleportal` directory of your GLPI installation:
+1. Clone into `plugins/simpleportal`:
 
 ```bash
 git clone https://github.com/pbolkhovitin/glpi-simpleportal.git plugins/simpleportal
 ```
 
-2. Install and activate the plugin from GLPI's plugin management interface.
+2. Install and activate from GLPI's _Setup → Plugins_ page:
 
-3. Configure the API credentials:
-   - Go to _Configuration → Plugins → SimplePortal_
-   - Enter the API URL (e.g., `http://localhost/apirest.php`)
-   - Enter the App Token of your API client
-   - Enter the User Token if required
+```bash
+php bin/console plugin:install simpleportal
+php bin/console plugin:activate simpleportal
+```
+
+3. Configure in _Setup → Plugins → SimplePortal → gear icon_:
+   - **Default entity** — entity for new tickets
+   - **Ticket type** — incident (default) or request
+   - **Notification** — enable/disable confirmation email
+   - **Sender email** — `From:` address for notifications
 
 ## Usage
 
-The portal is available at:
 ```
 http://your-glpi-instance/plugins/simpleportal/
 ```
+
+## Technical Notes
+
+- Plugin uses Symfony routing (`#[Route]`, `#[SecurityStrategy]`) and Twig templates
+- API session init skips `App-Token` for localhost API calls (GLPIKey decrypt fails on unencrypted token)
+- CSRF token obtained from `<meta property="glpi:csrf_token">` in login page
+- Plugin assets in `public/` are served statically at `/plugins/simpleportal/`
 
 ## License
 
