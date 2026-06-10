@@ -45,7 +45,8 @@ final class PortalController extends AbstractController
     private function getCategories(): array
     {
         global $DB;
-        $iterator = $DB->request('glpi_itilcategories', [
+        $iterator = $DB->request([
+            'FROM'   => 'glpi_itilcategories',
             'WHERE'  => [
                 'is_helpdeskvisible' => 1,
             ],
